@@ -128,7 +128,9 @@ const Products = () => {
             Manage your shoe inventory and product catalog.
           </p>
         </div>
-        <Button className="bg-gradient-primary text-black hover:text-white">
+        <Button 
+          onClick={() => window.location.href = "/products/add"}
+          className="bg-gradient-primary text-black hover:text-white">
           <Plus className="mr-2 h-4 w-4" />
           Add Product
         </Button>
