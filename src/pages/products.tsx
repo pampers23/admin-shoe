@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -89,6 +90,7 @@ const mockProducts = [
 
 
 const Products = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [products, setProducts] = useState(mockProducts)
@@ -129,7 +131,7 @@ const Products = () => {
           </p>
         </div>
         <Button 
-          onClick={() => window.location.href = "/products/add"}
+          onClick={() => navigate("/products/add")}
           className="bg-gradient-primary text-black hover:text-white">
           <Plus className="mr-2 h-4 w-4" />
           Add Product
