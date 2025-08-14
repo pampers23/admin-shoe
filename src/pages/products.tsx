@@ -88,9 +88,9 @@ const mockProducts = [
 
 
 
-export const Products = () => {
+const Products = () => {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [selectedCategory, setSelectedCategory] = useState("all")
   const [products, setProducts] = useState(mockProducts)
 
   const filteredProducts = products.filter(product => {
@@ -128,7 +128,7 @@ export const Products = () => {
             Manage your shoe inventory and product catalog.
           </p>
         </div>
-        <Button className="bg-gradient-primary hover:opacity-90 transition-opacity">
+        <Button className="bg-gradient-primary text-black hover:text-white">
           <Plus className="mr-2 h-4 w-4" />
           Add Product
         </Button>
@@ -157,10 +157,10 @@ export const Products = () => {
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categorie</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="Sneakers">Sneakers</SelectItem>
                 <SelectItem value="Running">Running</SelectItem>
-                <Select value="Casual">Casual</Select>
+                <SelectItem value="Casual">Casual</SelectItem>
                 <SelectItem value="Lifestyle">Lifestyle</SelectItem>
               </SelectContent>
             </Select>
@@ -237,3 +237,5 @@ export const Products = () => {
     </div>
   )
 }
+
+export default Products;

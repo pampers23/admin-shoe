@@ -22,7 +22,7 @@ const mockCategories = [
 ]
 
 
-export const Categories = () => {
+const Categories = () => {
   const [categories, setCategories] = useState(mockCategories);
   const handleDelete = (id: number) => {
     setCategories(categories.filter(c => c.id !== id))
@@ -110,3 +110,5 @@ export const Categories = () => {
     </div>
   )
 }
+
+export default Categories;
