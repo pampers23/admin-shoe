@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Search, Trash2, Eye } from "lucide-react"
+import { Plus, Search, Trash2, Eye, Edit } from "lucide-react"
 import nike from "@/assets/Nike Air Max 90.jpg"
 import adidas from "@/assets/Adidas Ultraboost 22.jpg"
 import converse from "@/assets/Converse Chuck Taylor.jpg"
@@ -106,10 +106,10 @@ const Products = () => {
     }
 
     if (status === "Low Stock" || stock < 20) {
-      return <Badge variant="secondary" className="bg-warning text-warning-foreground">Low Stock</Badge>
+      return <Badge variant="secondary" className="bg-blue-500 text-white">Low Stock</Badge>
     }
 
-    return <Badge variant="secondary" className="bg-success text-success-foreground">Active</Badge>
+    return <Badge variant="secondary" className="bg-green-500 text-white">Active</Badge>
   }
 
 
@@ -215,14 +215,27 @@ const Products = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="cursor-pointer hover:bg-blue-100 hover:text-blue-900"
+                        onClick={() => toast("Edit functionality not implemented yet")}
+                      >
+                        <Edit className="h-4 w-4 text-blue-900" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="cursor-pointer hover:bg-gray-300 hover:text-gray-900"
+                        onClick={() => toast("View functionality not implemented yet")}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(product.id)}
-                        className="text-destructive hover:bg-destructive"
+                        className="text-destructive hover:bg-destructive hover:text-white cursor-pointer"
                       >
                         <Trash2 className="h-4 w-4" /> 
                       </Button>
