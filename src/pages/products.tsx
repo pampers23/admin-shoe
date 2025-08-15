@@ -108,7 +108,7 @@ const Products = () => {
     }
 
     if (status === "Low Stock" || stock < 20) {
-      return <Badge variant="secondary" className="bg-blue-500 text-white">Low Stock</Badge>
+      return <Badge variant="secondary" className="bg-yellow-500 text-white">Low Stock</Badge>
     }
 
     return <Badge variant="secondary" className="bg-green-500 text-white">Active</Badge>
@@ -132,8 +132,8 @@ const Products = () => {
         </div>
         <Button 
           onClick={() => navigate("/products/add")}
-          className="bg-gradient-primary text-black hover:text-white">
-          <Plus className="mr-2 h-4 w-4" />
+          className="bg-blue-400 text-white hover:text-white cursor-pointer hover:bg-blue-600">
+          <Plus className="mr-1 h-4 w-4" />
           Add Product
         </Button>
       </div>

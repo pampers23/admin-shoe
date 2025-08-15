@@ -30,11 +30,13 @@ import { ArrowLeft, Save, Upload } from "lucide-react"
 import { toast } from "sonner"
 import { type Product, productSchema } from "@/zod-schema"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 
 
 const AddProducts = () => {
     const navigate = useNavigate()
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [seletedImage, setSelectedImage] = useState<string | null>(null)
 
     const form = useForm<Product>({
         resolver: zodResolver(productSchema),
@@ -49,9 +51,30 @@ const AddProducts = () => {
         },
     })
 
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        // If no file selected, stop
+        if (!file) return;
+
+        // Size check
+        if (file.size > 5 * 1024 * 1024) {
+            toast("Please upload an image smaller than 5MB");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setSelectedImage(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+        };
+
+
     const onSubmit = async (data: Product) => {
         try {
             console.log("Product data submitted:", data);
+            console.log("Selected image:", seletedImage);
             toast.success("Product added successfully!")
             navigate("/products")
         } catch (error) {
@@ -69,7 +92,7 @@ const AddProducts = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate("/products")}
-                className="hover:bg-accent"
+                className="hover:bg-accent cursor-pointer"
             >
                 <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -102,7 +125,11 @@ const AddProducts = () => {
                                         <FormItem>
                                             <FormLabel>Product Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Add product" {...field} />
+                                                <Input
+                                                    className="hover:border-blue-400"
+                                                    placeholder="Add product" 
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -152,7 +179,7 @@ const AddProducts = () => {
                                                 <FormLabel>Category</FormLabel>
                                                 <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger>
+                                                        <SelectTrigger className="w-[368px]">
                                                             <SelectValue placeholder="Select Category" />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -229,15 +256,16 @@ const AddProducts = () => {
                                     <Button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="bg-gradient-primary hover:opacity-90 transition-opacity"
+                                        className="bg-green-500 hover:opacity-90 transition-opacity hover:bg-green-600 cursor-pointer"
                                     >
                                         <Save className="mr-2 h-4 w-4" />
                                         {isSubmitting ? "Adding Product..." : "Add Product"}
                                     </Button>
                                     <Button
                                         type="button"
-                                        variant="outline"
+                                        variant="destructive"
                                         onClick={() => navigate("/products")}
+                                        className="cursor-pointer"
                                     >
                                         Cancel
                                     </Button>
@@ -258,15 +286,36 @@ const AddProducts = () => {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center 
-                        hover:bg-muted-foreground/50 transition-colors cursor-pointer">
-                            <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                            <p className="text-sm text-muted-foreground">
-                                Click to upload or drag and drop
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                PNG, JPG, or WEBP (max 10MB)
-                            </p>
+                        <div className="relative">
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            {seletedImage ? (
+                                <div className="relative">
+                                    <img 
+                                        src={seletedImage} 
+                                        alt="Product Preview"
+                                        className="w-full h-48 object-cover rounded-lg" 
+                                    />
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity 
+                                    rounded-lg flex items-center justify-center">
+                                        <p className="text-white text-sm">Click to change image</p>
+                                    </div>
+                                </div>
+                            ):(
+                                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors cursor-pointer h-48 flex flex-col items-center justify-center">
+                                    <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                                    <p className="text-sm text-muted-foreground mb-2">
+                                    Click to upload or drag and drop
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                    PNG, JPG or WEBP (max. 5MB)
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
