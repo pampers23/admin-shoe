@@ -30,7 +30,6 @@ import { ArrowLeft, Save, Upload } from "lucide-react"
 import { toast } from "sonner"
 import { type Product, productSchema } from "@/zod-schema"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
 
 
 const AddProducts = () => {
