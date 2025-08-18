@@ -130,6 +130,7 @@ export default function Dashboard(){
                         <Button variant="outline" className="w-full justify-start" asChild>
                             <a href="/categories">
                                 <Users className="mr-2 h-4 w-4" />
+                                Manage Categories
                             </a>
                         </Button>
                         <Button variant="outline" className="w-full justify-start" asChild>

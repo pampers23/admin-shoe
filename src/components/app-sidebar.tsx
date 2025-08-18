@@ -45,8 +45,8 @@ export const AppSidebar = () => {
     const getNavClassName = (path: string) => {
       const baseClasses = "transition-colors duration-200 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium"
       return isActive(path)
-        ? `${baseClasses} bg-primary text-primary-foreground shadow-soft`
-        : `${baseClasses} text-muted-foreground hover:bg-muted hover:text-foreground`
+        ? `${baseClasses} bg-blue-500 text-primary-foreground shadow-soft`
+        : `${baseClasses} text-muted-foreground hover:bg-blue-300 hover:text-foreground`
     }
 
   return (
