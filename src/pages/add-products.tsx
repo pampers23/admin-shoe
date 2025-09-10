@@ -30,12 +30,16 @@ import { ArrowLeft, Save, Upload } from "lucide-react"
 import { toast } from "sonner"
 import { type Product, productSchema } from "@/zod-schema"
 import { Textarea } from "@/components/ui/textarea"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { addProducts } from "@/actions/private"
+import { uploadImage } from "@/actions/upload"
 
-
-const AddProducts = () => {
+function AddProducts() {
     const navigate = useNavigate()
+    const queryClient = useQueryClient();
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [seletedImage, setSelectedImage] = useState<string | null>(null)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null) 
 
     const form = useForm<Product>({
         resolver: zodResolver(productSchema),
@@ -50,39 +54,47 @@ const AddProducts = () => {
         },
     })
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-
-        // If no file selected, stop
-        if (!file) return;
-
-        // Size check
-        if (file.size > 5 * 1024 * 1024) {
-            toast("Please upload an image smaller than 5MB");
-            return;
+    const addProduct = useMutation({
+        mutationFn: addProducts,
+        onSuccess: (data) => {
+            console.log("Product added successfully", data);
+            toast.success("Product added successfully");
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            navigate("/products");
+        },
+        onError: (error) => {
+            console.error("Failed to add product:", error);
+            toast.error("Failed to add product: " + error.message);
         }
+    })
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setSelectedImage(e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
-        };
+    const onSubmit = async (values: Product) => {
+        setIsSubmitting(true);
+        console.log("Submitting product values: ", values);
 
-
-    const onSubmit = async (data: Product) => {
         try {
-            console.log("Product data submitted:", data);
-            console.log("Selected image:", seletedImage);
-            toast.success("Product added successfully!")
-            navigate("/products")
-        } catch (error) {
-            toast.error("Failed to add product")
-        } finally {
-            setIsSubmitting(false)
-        }
-    }
+            let imageUrl = "";
 
+            if (uploadedFile) {
+                imageUrl = await uploadImage(uploadedFile);
+            }
+
+            const result = await addProduct.mutateAsync({
+                ...values,
+                image_url: imageUrl
+            })
+
+            console.log("Mutation result: ", result);
+            
+        } catch (error) {
+            console.error("Insert error: ", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+
+    
   return (
     <div className="space-y-6">
         {/* header */}
@@ -133,7 +145,7 @@ const AddProducts = () => {
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                />
+                                    />
 
                                 <FormField
                                     control={form.control}
@@ -289,13 +301,23 @@ const AddProducts = () => {
                             <Input
                                 type="file"
                                 accept="image/*"
-                                onChange={handleImageUpload}
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setUploadedFile(file);
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => {
+                                            setSelectedImage(reader.result as string);
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                }}
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
-                            {seletedImage ? (
+                            {selectedImage ? (
                                 <div className="relative">
                                     <img 
-                                        src={seletedImage} 
+                                        src={selectedImage} 
                                         alt="Product Preview"
                                         className="w-full h-48 object-cover rounded-lg" 
                                     />
@@ -304,7 +326,7 @@ const AddProducts = () => {
                                         <p className="text-white text-sm">Click to change image</p>
                                     </div>
                                 </div>
-                            ):(
+                            ) : (
                                 <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors cursor-pointer h-48 flex flex-col items-center justify-center">
                                     <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                                     <p className="text-sm text-muted-foreground mb-2">
