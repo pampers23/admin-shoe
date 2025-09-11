@@ -40,7 +40,7 @@ export async function getProducts() {
     try{
         const { data, error } = await supabase
             .from("products")
-            .select("id, name, category, brand, price, stock")
+            .select("id, name, category, brand, price, stock, image_url")
 
         if (error) throw new Error(error.message)
         

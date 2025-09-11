@@ -167,10 +167,11 @@ const Products = () => {
                 <TableRow key={product.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                        <span className="text-xs font-medium">
-                          {product.name.charAt(0)}
-                        </span>
+                      <div className="w-10 h-10 rounded-lg overflow-hidden">
+                        <img 
+                          src={product.image_url} 
+                          alt="" 
+                        />
                       </div>
                       <span>{product.name}</span>
                     </div>
@@ -191,14 +192,6 @@ const Products = () => {
                         onClick={() => toast("Edit functionality not implemented yet")}
                       >
                         <Edit className="h-4 w-4 text-blue-900" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="cursor-pointer hover:bg-gray-300 hover:text-gray-900"
-                        onClick={() => toast("View functionality not implemented yet")}
-                      >
-                        <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"

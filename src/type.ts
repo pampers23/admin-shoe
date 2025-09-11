@@ -16,4 +16,5 @@ export type getLimitedProducts = {
     brand: string;
     price: number;
     stock: number;
+    image_url: string;
 }
