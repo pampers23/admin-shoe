@@ -8,3 +8,12 @@ export type Product = {
     description: string;
     brand: string;
 }
+
+export type getLimitedProducts = {
+    id: number;
+    name: string;
+    category: string;
+    brand: string;
+    price: number;
+    stock: number;
+}

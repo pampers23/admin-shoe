@@ -26,88 +26,56 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Plus, Search, Trash2, Eye, Edit } from "lucide-react"
-import nike from "@/assets/Nike Air Max 90.jpg"
-import adidas from "@/assets/Adidas Ultraboost 22.jpg"
-import converse from "@/assets/Converse Chuck Taylor.jpg"
-import vans from "@/assets/Vans Old Skool.jpg"
-import new_balance from "@/assets/New Balance 574.jpg"
 import { toast } from "sonner"
-
-
-const mockProducts = [
-  {
-    id: 1,
-    name: "Nike Air Max 90",
-    category: "Sneakers",
-    brand: "Nike",
-    price: 120,
-    stock: 50,
-    status: "Active",
-    image: {nike},
-  },
-  {
-    id: 2,
-    name: "Adidas Ultraboost 22",
-    category: "Running",
-    brand: "Adidas",
-    price: 180,
-    stock: 23,
-    status: "Active",
-    image: {adidas},
-  },
-  {
-    id: 3,
-    name: "Converse Chuck Taylor",
-    category: "Casual",
-    brand: "Converse",
-    price: 65,
-    stock: 0,
-    status: "Out of Stock",
-    image: {converse},
-  },
-  {
-    id: 4,
-    name: "Vans Old Skool",
-    category: "Casual",
-    brand: "Vans",
-    price: 75,
-    stock: 12,
-    status: "Low Stock",
-    image: {vans},
-  },
-  {
-    id: 5,
-    name: "New Balance 574",
-    category: "Lifestyle",
-    brand: "New Balance",
-    price: 85,
-    stock: 67,
-    status: "Active",
-    image: {new_balance},
-  },
-]
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getProducts } from "@/actions/private";
+import type { getLimitedProducts } from "@/type";
+import { supabase } from "@/lib/client";
 
 
 const Products = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [products, setProducts] = useState(mockProducts)
+  const queryClient = useQueryClient();
+  
 
-  const filteredProducts = products.filter(product => {
+  const { data = [], isPending } = useQuery<getLimitedProducts[]>({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const { error } = await supabase.from("products").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Product deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const handleDelete = (id: number) => {
+    deleteMutation.mutate(id);
+  }
+
+  const filteredProducts = data.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
     return matchesSearch && matchesCategory
   })
 
-  const getStatusBadge = (status: string, stock: number) => {
-    if (status === "Out of Stock" || stock === 0) {
+  
+
+  const getStatusBadge = (stock: number) => {
+    if (stock === 0) {
       return <Badge variant="destructive">Out of Stock</Badge>
     }
 
-    if (status === "Low Stock" || stock < 20) {
+    if (stock < 20) {
       return <Badge variant="secondary" className="bg-yellow-500 text-white">Low Stock</Badge>
     }
 
@@ -115,10 +83,7 @@ const Products = () => {
   }
 
 
-  const handleDelete = (id: number) => {
-    setProducts(products.filter(p => p.id !== id))
-    toast("Product deleted successfully")
-  }
+  if (isPending) return <p>Loading products...</p>; 
 
   return (
     <div className="space-y-6">
@@ -215,7 +180,7 @@ const Products = () => {
                   <TableCell>{product.price}</TableCell>
                   <TableCell>{product.stock}</TableCell>
                   <TableCell>
-                    {getStatusBadge(product.status, product.stock)}
+                    {getStatusBadge(product.stock)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
