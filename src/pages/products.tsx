@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Search, Trash2, Eye, Edit } from "lucide-react"
+import { Plus, Search, Trash2, Edit } from "lucide-react"
 import { toast } from "sonner"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProducts } from "@/actions/private";
@@ -159,7 +159,7 @@ const Products = () => {
                 <TableHead>Price</TableHead>
                 <TableHead>Stock</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="pl-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -185,7 +185,8 @@ const Products = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button 
+                      <div className="pr-10">
+                        <Button 
                         variant="ghost" 
                         size="icon" 
                         className="cursor-pointer hover:bg-blue-100 hover:text-blue-900"
@@ -201,6 +202,7 @@ const Products = () => {
                       >
                         <Trash2 className="h-4 w-4" /> 
                       </Button>
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>
