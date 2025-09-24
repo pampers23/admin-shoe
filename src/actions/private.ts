@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/client";
-import type { Product } from "@/type";
+import type { Product, Order } from "@/type";
 import type { AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { Package, TrendingUp, Users, DollarSign } from "lucide-react"
@@ -71,53 +71,65 @@ export async function getRecentProducts() {
 }
 
 export async function getStats() {
-    // count products
-    const { count: totalProducts, error: productError } = await supabase
-        .from("products")
-        .select("*", { count: "exact", head: true });
+  // count products
+  const { count: totalProducts, error: productError } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true });
 
-    if (productError) throw productError;
+  if (productError) throw productError;
 
-    // count users
-    const { data, error } = await supabase
-        .from("customers")
-        .select("id, email, created_at");
-    
-    if (error) {
-        console.error("Error fetching users:", error);
-        throw error;
-    }
+  // count customers
+  const { count: totalCustomers, error: customerError } = await supabase
+    .from("customers")
+    .select("*", { count: "exact", head: true });
 
-    const totalCustomers = data?.length || 0
-    
-    return [
-        {
-            title: "Total Products",
-            value: totalProducts || 0,
-            description: "Number of products in stock",
-            icon: Package,
-            color: "bg-blue-500"
-        },
-        {
-            title: "Total Customers",
-            value: totalCustomers,
-            description: "Number of registered customers",
-            icon: Users,
-            color: "bg-green-500"
-        },
-        {
-            title: "Revenue",
-            value: "₱0",
-            description: "No orders yet",
-            icon: DollarSign,
-            color: "bg-purple-500"
-        },
-        {
-            title: "Active Orders",
-            value: 0,
-            description: "No active orders",
-            icon: TrendingUp,
-            color: "bg-orange-500"
-        }
-    ]
+  if (customerError) throw customerError;
+
+  // sum revenue (completed orders only)
+  const { data: revenueData, error: revenueError } = await supabase
+    .from("orders")
+    .select("total_amount, status");
+
+  if (revenueError) throw revenueError;
+
+  const totalRevenue =
+    revenueData
+      ?.filter((order) => order.status === "completed")
+      .reduce((sum, order) => sum + Number(order.total_amount), 0) || 0;
+
+  // active orders
+  const activeOrders =
+    revenueData?.filter((order) => order.status === "pending").length || 0;
+
+  return [
+    {
+      title: "Total Products",
+      value: totalProducts || 0,
+      description: "Number of products in stock",
+      icon: Package,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Total Customers",
+      value: totalCustomers || 0,
+      description: "Number of registered customers",
+      icon: Users,
+      color: "bg-green-500",
+    },
+    {
+      title: "Revenue",
+      value: `₱${totalRevenue.toLocaleString()}`,
+      description:
+        totalRevenue > 0 ? "Total sales revenue" : "No orders yet",
+      icon: DollarSign,
+      color: "bg-purple-500",
+    },
+    {
+      title: "Active Orders",
+      value: activeOrders,
+      description: "Orders currently pending",
+      icon: TrendingUp,
+      color: "bg-orange-500",
+    },
+  ];
 }

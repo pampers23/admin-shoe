@@ -18,3 +18,8 @@ export type getLimitedProducts = {
     stock: number;
     image_url: string;
 }
+
+export type Order = {
+    total_amount: number;
+    status: "pending" | "completed" | "cancelled";
+}
