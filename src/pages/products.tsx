@@ -190,7 +190,7 @@ const Products = () => {
                         variant="ghost" 
                         size="icon" 
                         className="cursor-pointer hover:bg-blue-100 hover:text-blue-900"
-                        onClick={() => toast("Edit functionality not implemented yet")}
+                        onClick={() => navigate(`/products/edit/${product.id}`)}
                       >
                         <Edit className="h-4 w-4 text-blue-900" />
                       </Button>

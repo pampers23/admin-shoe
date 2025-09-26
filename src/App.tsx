@@ -9,6 +9,7 @@ import Categories from "@/pages/categories";
 import Analytics from "@/pages/analytics";
 import NotFound from "@/pages/not-found";
 import AddProducts from "./pages/add-products";
+import { EditProducts } from "./pages/edit-products";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/add" element={<AddProducts />} />
+            <Route path="/products/edit/:id" element={<EditProducts />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/analytics" element={<Analytics />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

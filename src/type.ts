@@ -9,6 +9,18 @@ export type Product = {
     brand: string;
 }
 
+export type EditProduct = {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    category: string;
+    stock: number;
+    description: string;
+    brand: string;
+    status: string;
+}
+
 export type getLimitedProducts = {
     id: number;
     name: string;
