@@ -53,10 +53,10 @@ export const AppSidebar = () => {
     <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-gradient-surface border-r">
         {/* header */}
-        <div className="p-6 border-b">
+        <div className="p-2.5 border-b">
           <div className="flex items-center gap-3">
             <div className="w-8h h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <Package className="w-4 h-4 text-white" />
+              <Package className="w-3 h-3 text-white" />
             </div>
             {!collapsed && (
               <div>
