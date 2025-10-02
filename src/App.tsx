@@ -20,7 +20,7 @@ const App = () => (
       <BrowserRouter>
         <DashboardLayout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/add" element={<AddProducts />} />
             <Route path="/products/edit/:id" element={<EditProducts />} />
