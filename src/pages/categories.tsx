@@ -1,4 +1,4 @@
-import { useState } from "react"
+
 import {
   Card,
   CardContent,
@@ -7,26 +7,32 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, Package } from "lucide-react"
+import { Tailspin } from "ldrs/react";
+import "ldrs/react/Tailspin.css";
 import { toast } from "sonner"
-
-
-const mockCategories = [
-  { id: 1, name: "Sneaker", description: "Athlethic and casual sneakers", productCount: 34, color: "bg-blue-500" },
-  { id: 2, name: "Running", description: "Performance running man", productCount: 18, color: "bg-green-500" },
-  { id: 3, name: "Casual", description: "Everyday casual footwear", productCount: 25, color: "bg-purple-500" },
-  { id: 4, name: "Lifestyle", description: "Lifestyle and fashion shoes", productCount: 12, color: "bg-orange-500" },
-  { id: 1, name: "Formal", description: "Dress and formal shoes", productCount: 8, color: "bg-gray-500" },
-]
+import { useQuery } from "@tanstack/react-query"
+import type { Categories } from "@/type"
+import { getCategories } from "@/actions/private"
 
 
 const Categories = () => {
-  const [categories, setCategories] = useState(mockCategories);
-  const handleDelete = (id: number) => {
-    setCategories(categories.filter(c => c.id !== id))
-    toast("Category deleted!")
+  const { data: categories = [], isPending } = useQuery<Categories[]>({
+    queryKey: ["categories"],
+    queryFn: getCategories
+  })
+  
+  if (isPending) {
+    return (
+      <div className="h-96 w-full flex flex-col gap-4 items-center justify-center my-7 md:my-14">
+        <p className="text-sm text-muted-foreground animate-pulse">Fetching products...</p>
+        <Tailspin size="100" stroke="10" speed="0.9" color="#262E40" />
+      </div>
+    );
+  }
+  const handleDelete = (name: string) => {
+    toast(`${name} deleted!`)
   }
 
 
@@ -49,7 +55,7 @@ const Categories = () => {
       {/* categories grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category) => (
-          <Card key={category.id} className="border-0 shadow-soft hover:shadow-elegant transition-shadow duration-300">
+          <Card key={category.name} className="border-0 shadow-soft hover:shadow-elegant transition-shadow duration-300">
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -79,7 +85,7 @@ const Categories = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(category.id)}
+                    onClick={() => handleDelete(category.name)}
                     className="text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -90,23 +96,6 @@ const Categories = () => {
           </Card>
         ))}
       </div>
-
-      {/* add category form */}
-      <Card className="border-0 shadow-soft">
-        <CardHeader>
-          <CardTitle>Quick Add Category</CardTitle>
-          <CardDescription>
-            Create a new product category quickly.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Input placeholder="Category name" />
-            <Input placeholder="Description" />
-            <Button>Add Category</Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

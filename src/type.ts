@@ -35,3 +35,10 @@ export type Order = {
     total_amount: number;
     status: "pending" | "completed" | "cancelled";
 }
+
+export type Categories = {
+    name: string;
+    productCount: number;
+    description: string;
+    color: string;
+}

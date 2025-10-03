@@ -70,8 +70,6 @@ function AddProducts() {
 
     const onSubmit = async (values: Product) => {
         setIsSubmitting(true);
-        console.log("Submitting product values: ", values);
-
         try {
             let imageUrl = "";
 
@@ -83,9 +81,6 @@ function AddProducts() {
                 ...values,
                 image_url: imageUrl
             })
-
-            console.log("Mutation result: ", result);
-            
         } catch (error) {
             console.error("Insert error: ", error);
         } finally {
@@ -199,7 +194,7 @@ function AddProducts() {
                                                         <SelectItem value="Running">Running</SelectItem>
                                                         <SelectItem value="Casual">Casual</SelectItem>
                                                         <SelectItem value="Lifestyle">Lifestyle</SelectItem>
-                                                        <SelectItem value="Sport">Sport</SelectItem>
+                                                        <SelectItem value="Sport">Formal</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage/>

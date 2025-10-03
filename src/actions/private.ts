@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/client";
-import type { Product, Order } from "@/type";
+import type { Product, Order, Categories } from "@/type";
 import type { AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { Package, TrendingUp, Users, DollarSign } from "lucide-react"
@@ -132,4 +132,65 @@ export async function getStats() {
       color: "bg-orange-500",
     },
   ];
+}
+
+
+const categoryMeta: Record<string, { description: string; color: string }> = {
+  running: {
+    description: "Shoes designed for running and performance.",
+    color: "bg-blue-500",
+  },
+  casual: {
+    description: "Everyday casual shoes for comfort and style.",
+    color: "bg-green-500",
+  },
+  lifestyle: {
+    description: "Trendy lifestyle footwear for daily use.",
+    color: "bg-purple-500",
+  },
+  sneakers: {
+    description: "Sporty sneakers suitable for all occasions.",
+    color: "bg-yellow-500",
+  },
+  formal: {
+    description: "Elegant formal shoes for events and office wear.",
+    color: "bg-red-500",
+  },
+};
+
+export async function getCategories(): Promise<Categories[]> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("category");
+
+    if (error) throw new Error(error.message);
+    if (!data) return [];
+
+    // count products by category
+    const categoryMap: Record<string, number> = {};
+    data.forEach((item) => {
+      const name = item.category?.toLowerCase() || "uncategorized";
+      categoryMap[name] = (categoryMap[name] || 0) + 1;
+    });
+
+    // merge counts
+    return Object.entries(categoryMap).map(([name, productCount]) => {
+      const meta = categoryMeta[name] ?? {
+        description: "No description available",
+        color: "bg-gray-500",
+      };
+
+      return {
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        productCount,
+        description: meta.description,
+        color: meta.color,
+      };
+    });
+  } catch (error) {
+    const err = error as Error;
+    toast.error(err.message);
+    throw error;
+  }
 }

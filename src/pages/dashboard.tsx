@@ -6,6 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Tailspin } from "ldrs/react";
+import "ldrs/react/Tailspin.css";
 import { useQuery } from "@tanstack/react-query"
 import { getRecentProducts, getStats } from "@/actions/private"
 import { Badge } from "@/components/ui/badge"
@@ -32,8 +34,13 @@ export default function Dashboard(){
     }
 
     if (productsLoading || statsLoading) {
-        return <div>Loading...</div>
-    }
+    return (
+      <div className="h-96 w-full flex flex-col gap-4 items-center justify-center my-7 md:my-14">
+        <p className="text-sm text-muted-foreground animate-pulse">Fetching products...</p>
+        <Tailspin size="100" stroke="10" speed="0.9" color="#262E40" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
