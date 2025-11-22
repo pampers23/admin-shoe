@@ -13,12 +13,12 @@ import { Tailspin } from "ldrs/react";
 import "ldrs/react/Tailspin.css";
 import { toast } from "sonner"
 import { useQuery } from "@tanstack/react-query"
-import type { Categories } from "@/type"
+import type { Category } from "@/type"
 import { getCategories } from "@/actions/private"
 
 
 const Categories = () => {
-  const { data: categories = [], isPending } = useQuery<Categories[]>({
+  const { data: categories = [], isPending } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: getCategories
   })

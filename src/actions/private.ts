@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/client";
-import type { Product, Categories } from "@/type";
+import type { Product, Category } from "@/type";
 import type { AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { Package, TrendingUp, Users, DollarSign } from "lucide-react"
@@ -158,7 +158,7 @@ const categoryMeta: Record<string, { description: string; color: string }> = {
   },
 };
 
-export async function getCategories(): Promise<Categories[]> {
+export async function getCategories(): Promise<Category[]> {
   try {
     const { data, error } = await supabase
       .from("products")

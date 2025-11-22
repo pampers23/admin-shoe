@@ -41,7 +41,7 @@ export type Order = {
     items: number;
 }
 
-export type Categories = {
+export type Category = {
     name: string;
     productCount: number;
     description: string;
