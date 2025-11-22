@@ -7,7 +7,7 @@ import Dashboard from "@/pages/dashboard";
 import Products from "@/pages/products";
 import Categories from "./pages/categories";
 import Analytics from "@/pages/analytics";
-// import NotFound from "@/pages/not-found";
+import NotFound from "@/pages/not-found";
 import AddProducts from "./pages/add-products";
 import { EditProducts } from "./pages/edit-products";
 import Orders from "./pages/orders";
@@ -29,8 +29,7 @@ const App = () => (
               <Route path="/categories" element={<Categories />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/orders" element={<Orders />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              {/* <Route path="*" element={<NotFound />} /> */}
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
       </BrowserRouter>

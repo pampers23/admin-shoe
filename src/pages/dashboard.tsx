@@ -3,23 +3,14 @@ import { Button } from "@/components/ui/button"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { useQuery } from "@tanstack/react-query"
-import { getStats, getRecentProducts } from "@/actions/private"
+import { getStats, getRecentProducts, getRevenueData } from "@/actions/private"
 import { Tailspin } from "ldrs/react"
 import "ldrs/react/Tailspin.css"
-
-const chartData = [
-  { month: "Jan", revenue: 4200 },
-  { month: "Feb", revenue: 3800 },
-  { month: "Mar", revenue: 5200 },
-  { month: "Apr", revenue: 4600 },
-  { month: "May", revenue: 6100 },
-  { month: "Jun", revenue: 5800 },
-]
 
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    color: "hsl(blue, 100%, 50%)",
+    color: "hsl(217, 91%, 60%)",
   },
 }
 
@@ -34,7 +25,12 @@ export default function Dashboard() {
     queryFn: getRecentProducts,
   })
 
-  if (statsLoading || productsLoading) {
+  const { data: revenueData = [], isPending: revenueLoading } = useQuery({
+    queryKey: ["revenue-data"],
+    queryFn: getRevenueData,
+  })
+
+  if (statsLoading || productsLoading || revenueLoading) {
     return (
       <div className="h-96 w-full flex flex-col gap-4 items-center justify-center">
         <p className="text-sm text-muted-foreground animate-pulse">Loading dashboard...</p>
@@ -91,7 +87,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px]">
-              <AreaChart data={chartData}>
+              <AreaChart data={revenueData}>
                 <defs>
                   <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
                     <stop
@@ -146,7 +142,7 @@ export default function Dashboard() {
                 topProducts.slice(0, 4).map((product, index) => (
                   <div key={product.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-xs font-bold">
+                      <div className="w-8 h-8 bg-blue-400 rounded-lg flex items-center justify-center text-primary-foreground text-xs font-bold">
                         #{index + 1}
                       </div>
                       <div>

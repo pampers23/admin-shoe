@@ -187,13 +187,13 @@ const Products = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Product</TableHead>
+                <TableHead className="w-[240px]">Product</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Brand</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Stock</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="pl-10">Actions</TableHead>
+                <TableHead className="w-[130px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

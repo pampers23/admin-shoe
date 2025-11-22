@@ -2,7 +2,7 @@
 
 import { type LucideIcon } from "lucide-react";
 
-import { buttonVariants } from "@/components/ui/button";
+// import { buttonVariants } from "@/components/ui/button";
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { NavLink } from "react-router";
 
@@ -24,12 +24,16 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <NavLink
                 className={({ isActive }) =>
-                  buttonVariants({ variant: isActive ? "default" : "ghost", className: "w-full justify-start" })
+                  `flex items-center gap-2 w-full px-4 py-2 rounded-lg transition-colors ${
+                    isActive 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'text-black hover:bg-blue-500 hover:text-white'
+                  }`
                 }
                 to={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
-              </NavLink>
+            </NavLink>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

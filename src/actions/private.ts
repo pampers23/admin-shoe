@@ -269,3 +269,38 @@ export async function updateProduct(id: number, updates: Partial<Product>) {
     throw error;
   }
 }
+
+export async function getRevenueData() {
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("created_at, total_amount, status")
+      .eq("status", "completed")
+      .order("created_at", { ascending: true });
+
+    if (error) throw new Error(error.message);
+
+    const monthlyRevenue: Record<string, number> = {};
+
+    data?.forEach((order) => {
+      const date = new Date(order.created_at);
+      const monthKey = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+
+      if (!monthlyRevenue[monthKey]) {
+        monthlyRevenue[monthKey] = 0;
+      }
+      monthlyRevenue[monthKey] += Number(order.total_amount)
+    });
+
+    const months = Object.keys(monthlyRevenue).slice(-6);
+
+    return months.map(month => ({
+      month: month.split(' ')[0],
+      revenue: Math.round(monthlyRevenue[month]),
+    }));
+  } catch (error) {
+    const err = error as Error;
+    toast.error(err.message);
+    throw error;
+  }
+}
