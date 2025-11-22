@@ -152,7 +152,7 @@ const categoryMeta: Record<string, { description: string; color: string }> = {
     description: "Sporty sneakers suitable for all occasions.",
     color: "bg-yellow-500",
   },
-  formal: {
+  sport: {
     description: "Elegant formal shoes for events and office wear.",
     color: "bg-red-500",
   },
@@ -188,6 +188,81 @@ export async function getCategories(): Promise<Categories[]> {
         color: meta.color,
       };
     });
+  } catch (error) {
+    const err = error as Error;
+    toast.error(err.message);
+    throw error;
+  }
+}
+
+export async function getOrders() {
+  try {
+    const { data, error } = await supabase
+    .from("orders")
+    .select(`
+      *,
+      customers!customer_id (
+        firstname,
+        lastname,
+        email  
+      ),
+      order_items (
+        id,
+        quantity
+      )
+      `)
+    .order("created_at", { ascending: false });
+
+    if (error) throw new Error(error.message)
+
+    return data;
+  } catch (error) {
+    const err = error as Error;
+    toast.error(err.message);
+    throw error;
+  }
+}
+
+export async function getProductById(id: number) {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw new Error(error.message);
+
+    return data;
+  } catch (error) {
+    const err = error as Error;
+    toast.error(err.message);
+    throw error;
+  }
+}
+
+export async function updateProduct(id: number, updates: Partial<Product>) {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .update({
+        name: updates.name,
+        brand: updates.brand,
+        category: updates.category,
+        price: updates.price,
+        stock: updates.stock,
+        sku: updates.sku,
+        description: updates.description,
+        image_url: updates.image_url
+      })
+      .eq("id", id)
+      .select()
+      .single();
+
+      if (error) throw new Error(error.message);
+
+      toast.success("Product updated successfully");
+      return data;
   } catch (error) {
     const err = error as Error;
     toast.error(err.message);

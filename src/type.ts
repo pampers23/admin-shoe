@@ -32,8 +32,13 @@ export type getLimitedProducts = {
 }
 
 export type Order = {
-    total_amount: number;
-    status: "pending" | "completed" | "cancelled";
+    id: string;
+    customerName: string;
+    email: string;
+    date: string;
+    status: "pending" | "completed" | "delivered" | "cancelled";
+    total: number;
+    items: number;
 }
 
 export type Categories = {
@@ -42,3 +47,4 @@ export type Categories = {
     description: string;
     color: string;
 }
+

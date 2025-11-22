@@ -30,6 +30,11 @@ const data = {
       url: "/categories",
       icon: ShoppingBag,
     },
+    {
+      title: "Orders",
+      url: "/orders",
+      icon: Package,
+    }
     // {
     //   title: "Analytics",
     //   url: "/analytics",

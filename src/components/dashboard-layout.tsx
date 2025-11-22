@@ -1,11 +1,8 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./app-sidebar"
+import { Outlet } from "react-router-dom";
 
-interface DashboardLayoutProps {
-    children: React.ReactNode
-}
-
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout() {
   return (
     <SidebarProvider>
         <div className="min-h-screen flex w-full bg-background">
@@ -24,7 +21,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 {/* main content */}
                 <main className="flex-1 overflow-auto">
                     <div className="container mx-auto px-6 py-6">
-                        {children}
+                        <Outlet/>
                     </div>
                 </main>
             </div>

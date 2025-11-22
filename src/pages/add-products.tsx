@@ -81,6 +81,9 @@ function AddProducts() {
                 ...values,
                 image_url: imageUrl
             })
+
+            console.log("Mutation result: ", result);
+            
         } catch (error) {
             console.error("Insert error: ", error);
         } finally {
@@ -166,7 +169,7 @@ function AddProducts() {
                                             <FormControl>
                                                 <Textarea
                                                    placeholder="Describe your product features, materials and benefits..."
-                                                   className="min-h-[100px]:"
+                                                   className="min-h-[100px]"
                                                    {...field} 
                                                 />
                                             </FormControl>

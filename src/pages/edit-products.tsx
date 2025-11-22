@@ -17,129 +17,91 @@ import {
 } from "@/components/ui/select"
 import { ArrowLeft, Save, Upload } from "lucide-react"
 import { toast } from "sonner"
-import adidas from "../assets/Adidas Ultraboost 22.jpg"
-import converse from "../assets/Converse Chuck Taylor.jpg"
-import balance from "../assets/New Balance 574.jpg"
-import nike from "../assets/Nike Air Max 90.jpg"
-import vans from "../assets/Vans Old Skool.jpg"
 import { useNavigate, useParams } from "react-router-dom"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Input } from "@/components/ui/input"
-import { type EditProduct } from "@/type"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getProductById, updateProduct } from "@/actions/private"
+import { Tailspin } from "ldrs/react"
+import "ldrs/react/Tailspin.css"
 
-const imageMap: Record <string, string>= {
-    "Adidas Ultraboost 22.jpg": adidas,
-    "Converse Chuck Taylor.jpg": converse,
-    "New Balance 574.jpg": balance,
-    "Nike Air Max 90.jpg": nike,
-    "Vans Old Skool.jpg": vans,
-}
-
-const mockProduct = [
-    {
-        id: 1,
-        name: "Adidas Ultraboost 22",
-        category: "Running",
-        brand: "Adidas",
-        price: 180,
-        stock: 25,
-        status: "Active",
-        image_url: "Adidas Ultraboost 22.jpg",
-        description: "Experience unparalleled comfort and energy return with the Adidas Ultraboost 22, designed for runners who demand the best.",
-    },
-    {
-        id: 2,
-        name: "Converse Chuck Taylor",
-        category: "Casual",
-        brand: "Converse",
-        price: 60,
-        stock: 0,
-        status: "Out of Stock",
-        image_url: "Converse Chuck Taylor.jpg",
-        description: "The iconic Converse Chuck Taylor, a timeless sneaker that combines classic style with modern comfort for everyday wear.",
-    },
-    {
-        id: 3,
-        name: "New Balance 574",
-        category: "Lifestyle",
-        brand: "New Balance",
-        price: 80,
-        stock: 15,
-        status: "Low Stock",
-        image_url: "New Balance 574.jpg",
-        description: "The New Balance 574 offers a perfect blend of retro style and contemporary comfort, making it a versatile choice for any wardrobe.",
-    },
-    {
-        id: 4,
-        name: "Nike Air Max 90",
-        category: "Running",
-        brand: "Nike",
-        price: 120,
-        stock: 30,
-        status: "Active",
-        image_url: "Nike Air Max 90.jpg",
-        description: "Step into the iconic Nike Air Max 90, featuring bold design and superior cushioning for a sneaker that stands out in both style and performance.",
-    },
-    {
-        id: 5,
-        name: "Vans Old Skool",
-        category: "Skateboarding",
-        brand: "Vans",
-        price: 70,
-        stock: 5,
-        status: "Low Stock",
-        image_url: "Vans Old Skool.jpg",
-        description: "The Vans Old Skool, a classic skate shoe that combines durability and style, perfect for both the skate park and everyday wear.",
-    }
-]
-
-const categories = ["Running", "Casual", "Lifestyle", "Skateboarding"]
-const brands = ["Adidas", "Converse", "New Balance", "Nike", "Vans"]
-const statusOptions = ["Active", "Out of Stock", "Low Stock"]
-
+const categories = ["Running", "Casual", "Lifestyle", "Skateboarding", "Sport"]
+const brands = ["Adidas", "Converse", "New Balance", "Nike", "Vans", "Puma", "Reebok"]
 
 export const EditProducts = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
-    const [product, setProduct] = useState<EditProduct | null>(null)
-    const [loading, setLoading] = useState(false)
+    const { data: product, isPending } = useQuery({
+        queryKey: ["product", id],
+        queryFn: () => getProductById(Number(id)),
+        enabled: !!id,
+    });
 
-    useEffect(() => {
-        const foundProduct = mockProduct.find(p => p.id === parseInt(id!))
-        if (foundProduct) {
-            setProduct(foundProduct)
-        } else {
-            toast.error("Product not found")
-            navigate("/products")
+    const [formData, setFormData] = useState({
+        name: "",
+        brand: "",
+        category: "",
+        description: "",
+        price: 0,
+        stock: 0,
+        image_url: "",
+    });
+
+    React.useEffect(() => {
+        if (product) {
+            setFormData({
+                name: product.name || "",
+                brand: product.brand || "",
+                category: product.category || "",
+                description: product.description || "",
+                price: product.price || 0,
+                stock: product.stock || 0,
+                image_url: product.image_url || "",
+            });
         }
-    }, [id, navigate, toast])
+    }, [product]);
+
+    const updateMutation = useMutation({
+        mutationFn: (updates: typeof formData) => updateProduct(Number(id), updates),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            queryClient.invalidateQueries({ queryKey: ["product", id] });
+            navigate("/products");
+        },
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        toast.success("Product updated successfully")
-
-        setLoading(false)
-        navigate("/products")
-    }
+        e.preventDefault();
+        updateMutation.mutate(formData);
+    };
 
     const handleInputChange = (field: string, value: string | number) => {
-        setProduct(prev => prev ? { ...prev, [field]: value } : null)
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    if (isPending) {
+        return (
+            <div className="h-96 w-full flex flex-col gap-4 items-center justify-center my-7 md:my-14">
+                <p className="text-sm text-muted-foreground animate-pulse">Loading product...</p>
+                <Tailspin size="100" stroke="10" speed="0.9" color="#262E40" />
+            </div>
+        );
     }
 
     if (!product) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
-                    <h3 className="text-lg font-semibold">Loading...</h3>
-                    <p className="text-muted-foreground">Please wait while we load the product details.</p>
+                    <h3 className="text-lg font-semibold">Product not found</h3>
+                    <p className="text-muted-foreground">The product you're looking for doesn't exist.</p>
+                    <Button onClick={() => navigate("/products")} className="mt-4">
+                        Back to Products
+                    </Button>
                 </div>
             </div>
-        )
+        );
     }
 
   return (
@@ -155,14 +117,14 @@ export const EditProducts = () => {
                 Back to Products
             </Button>
             <div>
-                <h1 className="text-3xl font-bold">Edit products</h1>
+                <h1 className="text-3xl font-bold">Edit Product</h1>
                 <p className="text-muted-foreground">Update product information and details</p>
             </div>
         </div>
 
         <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* product image change */}
+                {/* product image */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Product Image</CardTitle>
@@ -170,20 +132,26 @@ export const EditProducts = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="aspect-square w-full max-w-sm mx-auto rounded-lg overflow-hidden bg-muted">
-                            <img 
-                                src={imageMap[product.image_url]}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                            />
+                            {formData.image_url ? (
+                                <img 
+                                    src={formData.image_url}
+                                    alt={formData.name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                    No image
+                                </div>
+                            )}
                         </div>
-                        <Button variant="outline" className="w-full">
+                        <Button variant="outline" className="w-full" type="button">
                             <Upload className="h-4 w-4 mr-2" />
                             Change image
                         </Button>
                     </CardContent>
                 </Card>
 
-                {/* product details change */}
+                {/* product details */}
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
                         <CardHeader>
@@ -196,7 +164,7 @@ export const EditProducts = () => {
                                     <Label htmlFor="name">Product Name</Label>
                                     <Input
                                         id="name"
-                                        value={product.name}
+                                        value={formData.name}
                                         onChange={(e) => handleInputChange("name", e.target.value)}
                                         placeholder="Enter product name"
                                         required
@@ -205,7 +173,7 @@ export const EditProducts = () => {
                                 <div className="space-y-2">
                                     <Label htmlFor="brand">Brand</Label>
                                     <Select
-                                        value={product.brand}
+                                        value={formData.brand}
                                         onValueChange={(value) => handleInputChange("brand", value)}
                                     >
                                         <SelectTrigger>
@@ -224,7 +192,7 @@ export const EditProducts = () => {
                                 <div className="space-y-2">
                                     <Label htmlFor="category">Category</Label>
                                     <Select
-                                        value={product.category}
+                                        value={formData.category}
                                         onValueChange={(value) => handleInputChange("category", value)}
                                     >
                                         <SelectTrigger>
@@ -237,29 +205,13 @@ export const EditProducts = () => {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="status">Status</Label>
-                                    <Select
-                                        value={product.status}
-                                        onValueChange={(value) => handleInputChange("status", value)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {statusOptions.map(status => (
-                                                <SelectItem key={status} value={status}>{status}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea
                                     id="description"
-                                    value={product.description}
+                                    value={formData.description}
                                     onChange={(e) => handleInputChange("description", e.target.value)}
                                     placeholder="Enter product description"
                                     className="min-h-[100px]"
@@ -276,12 +228,13 @@ export const EditProducts = () => {
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label>Price (P)</Label>
+                                    <Label>Price (₱)</Label>
                                     <Input
                                         id="price"
                                         type="number"
                                         min="0"
-                                        value={product.price}
+                                        step="0.01"
+                                        value={formData.price}
                                         onChange={(e) => handleInputChange("price", parseFloat(e.target.value))}
                                         placeholder="0.00"
                                         required
@@ -293,7 +246,7 @@ export const EditProducts = () => {
                                         id="stock"
                                         type="number"
                                         min="0"
-                                        value={product.stock}
+                                        value={formData.stock}
                                         onChange={(e) => handleInputChange("stock", parseInt(e.target.value))}
                                         placeholder="0"
                                         required
@@ -313,9 +266,9 @@ export const EditProducts = () => {
                 >
                     Cancel
                 </Button>
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" disabled={updateMutation.isPending}>
                     <Save className="h-4 w-4 mr-2" />
-                    {loading ? "Saving..." : "Save Changes"}
+                    {updateMutation.isPending ? "Saving..." : "Save Changes"}
                 </Button>
             </div>
         </form>
