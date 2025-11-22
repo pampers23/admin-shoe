@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import Dashboard from "@/pages/dashboard";
 import Products from "@/pages/products";
-import Categories from "@/pages/categories";
+import type {Categories} from "@/pages/categories";
 import Analytics from "@/pages/analytics";
 // import NotFound from "@/pages/not-found";
 import AddProducts from "./pages/add-products";

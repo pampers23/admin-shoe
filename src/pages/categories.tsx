@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Package } from "lucide-react"
+import { Plus, Trash2, Package } from "lucide-react"
 import { Tailspin } from "ldrs/react";
 import "ldrs/react/Tailspin.css";
 import { toast } from "sonner"

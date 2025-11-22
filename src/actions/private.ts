@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/client";
-import type { Product, Order, Categories } from "@/type";
+import type { Product, Categories } from "@/type";
 import type { AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { Package, TrendingUp, Users, DollarSign } from "lucide-react"

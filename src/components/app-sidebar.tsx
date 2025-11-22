@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, LayoutDashboardIcon, Package, BarChart3} from "lucide-react";
+import { ShoppingBag, LayoutDashboardIcon, Package} from "lucide-react";
 import * as React from "react";
 
 import {

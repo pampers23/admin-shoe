@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowLeft, Save, Upload } from "lucide-react"
-import { toast } from "sonner"
 import { useNavigate, useParams } from "react-router-dom"
 import React, { useState } from "react"
 import { Input } from "@/components/ui/input"
