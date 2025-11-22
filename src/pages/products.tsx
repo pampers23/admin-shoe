@@ -25,6 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { Plus, Search, Trash2, Edit } from "lucide-react"
 import { Tailspin } from "ldrs/react";
 import "ldrs/react/Tailspin.css";
@@ -40,6 +49,9 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const queryClient = useQueryClient();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   
 
   const { data = [], isPending } = useQuery<getLimitedProducts[]>({
@@ -83,6 +95,21 @@ const Products = () => {
     return <Badge variant="secondary" className="bg-green-500 text-white">Active</Badge>
   }
 
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  }
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    setCurrentPage(1);
+  }
+
 
   if (isPending) {
     return (
@@ -124,12 +151,12 @@ const Products = () => {
                 <Input
                   placeholder="Search products..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -171,7 +198,7 @@ const Products = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <TableRow key={product.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
@@ -217,6 +244,40 @@ const Products = () => {
               ))}
             </TableBody>
           </Table>
+
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink> 
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

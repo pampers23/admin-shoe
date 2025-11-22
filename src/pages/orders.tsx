@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Package, Search, Calendar, Filter, } from "lucide-react"
+import { Package, Search, Calendar, Filter, Eye, } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -39,6 +39,7 @@ import { getOrders } from "@/actions/private"
 import { Tailspin } from "ldrs/react";
 import "ldrs/react/Tailspin.css";
 import { format } from 'date-fns';
+import { Button } from "@/components/ui/button"
 
 
 const statusColors: Record<Order['status'], string> = {
@@ -53,7 +54,7 @@ const Orders = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
+  const itemsPerPage = 10
 
   const { data: orders = [], isPending } = useQuery({
     queryKey: ["orders"],
@@ -183,12 +184,13 @@ const Orders = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead className="w-[120px]">Order ID</TableHead>
+                  <TableHead className="w-[250px]">Customer</TableHead>
+                  <TableHead className="w-[130px]">Date</TableHead>
+                  <TableHead >Items</TableHead>
+                  <TableHead >Total</TableHead>
+                  <TableHead >Status</TableHead>
+                  <TableHead className="w-[75px] pr-10 text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -215,6 +217,11 @@ const Orders = () => {
                         <Badge variant="outline" className={statusColors[order.status as Order['status']]}>
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))

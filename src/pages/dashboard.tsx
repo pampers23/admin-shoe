@@ -1,8 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Package, TrendingUp, Users, DollarSign } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { useQuery } from "@tanstack/react-query"
+import { getStats, getRecentProducts } from "@/actions/private"
+import { Tailspin } from "ldrs/react"
+import "ldrs/react/Tailspin.css"
 
 const chartData = [
   { month: "Jan", revenue: 4200 },
@@ -16,50 +19,30 @@ const chartData = [
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    color: "hsl(var(--primary))",
+    color: "hsl(blue, 100%, 50%)",
   },
 }
 
-const topProducts = [
-  { name: "Nike Air Max 90", sales: 145, revenue: "$17,400" },
-  { name: "Adidas Ultraboost", sales: 112, revenue: "$20,160" },
-  { name: "Converse Chuck Taylor", sales: 98, revenue: "$6,370" },
-  { name: "Vans Old Skool", sales: 87, revenue: "$6,525" },
-  { name: "New Balance 574", sales: 76, revenue: "$6,460" }
-]
-
-const stats = [
-  {
-    title: "Total Products",
-    value: "124",
-    description: "+12% from last month",
-    icon: Package,
-    color: "bg-blue-500"
-  },
-  {
-    title: "Revenue",
-    value: "$23,456",
-    description: "+8% from last month", 
-    icon: DollarSign,
-    color: "bg-green-500"
-  },
-  {
-    title: "Active Orders",
-    value: "45",
-    description: "+15% from last week",
-    icon: TrendingUp,
-    color: "bg-purple-500"
-  },
-  {
-    title: "Customers",
-    value: "892",
-    description: "+3% from last month",
-    icon: Users,
-    color: "bg-orange-500"
-  }
-]
-
 export default function Dashboard() {
+  const { data: stats = [], isPending: statsLoading } = useQuery({
+    queryKey: ["stats"],
+    queryFn: getStats,
+  })
+
+  const { data: topProducts = [], isPending: productsLoading } = useQuery({
+    queryKey: ["recent-products"],
+    queryFn: getRecentProducts,
+  })
+
+  if (statsLoading || productsLoading) {
+    return (
+      <div className="h-96 w-full flex flex-col gap-4 items-center justify-center">
+        <p className="text-sm text-muted-foreground animate-pulse">Loading dashboard...</p>
+        <Tailspin size="100" stroke="10" speed="0.9" color="#262E40" />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -145,32 +128,39 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Top Selling Products */}
+        {/* Top Products - showing recent products from DB */}
         <Card className="border-0 shadow-soft">
           <CardHeader>
-            <CardTitle>Top Selling Products</CardTitle>
+            <CardTitle>Recent Products</CardTitle>
             <CardDescription>
-              Best performing shoes this month
+              Latest products added to inventory
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {topProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-xs font-bold">
-                      #{index + 1}
+              {topProducts.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No products found
+                </p>
+              ) : (
+                topProducts.slice(0, 4).map((product, index) => (
+                  <div key={product.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-xs font-bold">
+                        #{index + 1}
+                      </div>
+                      <div>
+                        <p className="font-medium">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">{product.brand} • {product.category}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-muted-foreground">{product.sales} units</p>
+                    <div className="text-right">
+                      <p className="font-medium">₱{product.price}</p>
+                      <p className="text-sm text-muted-foreground">{product.stock} in stock</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">{product.revenue}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
