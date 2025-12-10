@@ -1,59 +1,59 @@
-Admin-Shoe 🥾👟
+# Admin-Shoe 🥾👟
 
-A modern admin dashboard built with ReactJS, TypeScript, Vite, TailwindCSS (with ShadCN UI), TanStack Query, and Supabase — designed for managing shoe-shop data, products, inventory, and users.
+> A modern admin dashboard built with React, TypeScript and Vite — designed for managing shoe-shop data, products, inventory, users (and more as you extend it).
 
-🧰 Tech Stack
-Category	Technology / Tool
-Frontend Framework	ReactJS + TypeScript
-Styling	TailwindCSS, ShadCN UI
-Data Fetching / Caching	TanStack Query
-Backend / Database (BaaS)	Supabase
-Build Tool	Vite
-Code Quality	ESLint (TypeScript-aware rules)
-Optional / Extendable	Zustand / Redux, Charts libraries, Routing, etc.
-📦 Features (So Far / Planned)
+## ✅ Why Admin-Shoe?
 
-⚛️ React + TypeScript foundation
+`admin-shoe` gives you a strong starting point for building a full-featured admin UI with a modern web stack:
 
-🎨 TailwindCSS + ShadCN UI for clean, modern, and reusable UI components
+- ⚛️ React + TypeScript — safe, maintainable, and developer-friendly.  
+- ⚡ Vite — fast development and build times with HMR. :contentReference[oaicite:1]{index=1}  
+- 🧹 Clean configuration and minimal setup — no heavy boilerplate.  
+- 🛠️ ESLint + Type-aware linting — ensures code quality and reduces runtime bugs.
 
-🚀 TanStack Query for powerful caching & data synchronization
+This project is ideal if you want an admin dashboard scaffold to build on (e.g. for e-commerce, inventory management, CMS), or if you want to learn best practices in project structure, linting and build tooling.
 
-🗄️ Supabase database integration (Auth, CRUD, APIs, Realtime — depending on your usage)
+---
 
-⚡ Vite development environment with HMR
+## 📦 Features (So Far / Planned)
 
-🧱 Scalable folder structure for real-world admin dashboards
+- Core React + TS + Vite setup  
+- Structured folder layout — scalable and maintainable  
+- Type-checked linting for safer code (via ESLint + TS)  
+- Ready-to-extend for admin dashboard features (products, users, orders, etc.)  
+- Build & dev scripts included — easy to get started  
 
-🧹 ESLint with type-aware linting
+> ⚠️ **Note**: This is a template / scaffold — you’ll need to implement domain-specific logic (API integrations, state management, UI components) based on your use case.
 
-📁 Ready to extend with modules (Products, Users, Inventory, Orders, Categories, etc.)
+---
 
-Note: Current repository is a scaffold; full business logic (CRUD, auth flows, RBAC, etc.) can be added depending on your requirements.
+## 🧰 Tech Stack
 
-📚 Dependencies Overview (Professional Summary)
-Library	Purpose
-ReactJS	Core UI rendering
-TypeScript	Type safety + maintainability
-TailwindCSS	Utility-first styling
-ShadCN UI	Accessible, themeable component system
-TanStack Query	Server state management & caching
-Supabase JavaScript SDK	Database, Auth, Storage
-Vite	Fast dev server & optimized builds
-ESLint	Code quality enforcement
-🚀 Getting Started
+| Layer | Technology / Tool |
+|-------|------------------|
+| UI | React, TypeScript |
+| Build / Bundler | Vite |
+| Linting / Code Quality | ESLint + TypeScript-aware rules |
+| (Optional / Future) | State Management / API / UI Libraries — as needed |
+
+---
+
+## 🚀 Getting Started
+
+```bash
 # 1. Clone the repo
 git clone https://github.com/pampers23/admin-shoe.git
 cd admin-shoe
 
 # 2. Install dependencies
 npm install
+# or if you use yarn / pnpm: yarn / pnpm install
 
 # 3. Run development server
 npm run dev
 
-# Build for production
+# 4. Build for production
 npm run build
 
-# Preview build (optional)
+# 5. Preview build (optional)
 npm run preview
