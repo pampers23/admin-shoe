@@ -7,11 +7,13 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  SidebarFooter,
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { NavMain } from "@/components/navbar/nav-main";
 import Logo from "./logo";
+import { LogoutButton } from "./logout";
 
 const data = {
   navMain: [
@@ -35,11 +37,6 @@ const data = {
       url: "/orders",
       icon: Package,
     }
-    // {
-    //   title: "Analytics",
-    //   url: "/analytics",
-    //   icon: BarChart3,
-    // }
   ],
 };
 
@@ -59,6 +56,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter className="mb-2">
+        <LogoutButton />
+      </SidebarFooter>
     </Sidebar>
   );
 }

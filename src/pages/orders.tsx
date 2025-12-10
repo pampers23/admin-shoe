@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Package, Search, Calendar, Filter, Eye, } from "lucide-react"
+import { Package, Search, Calendar, Filter, Eye} from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -33,21 +33,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import type { Order } from "@/type"
+import { Order, statusColors } from "@/type"
 import { useQuery } from "@tanstack/react-query"
 import { getOrders } from "@/actions/private"
 import { Tailspin } from "ldrs/react";
 import "ldrs/react/Tailspin.css";
 import { format } from 'date-fns';
 import { Button } from "@/components/ui/button"
-
-
-const statusColors: Record<Order['status'], string> = {
-  pending: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-  completed: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  delivered: "bg-green-500/10 text-green-500 border-green-500/20",
-  cancelled: "bg-red-500/10 text-red-500 border-red-500/20",
-}
+import { OrderDetails } from "@/components/order-details"
 
 
 const Orders = () => {
@@ -55,6 +48,9 @@ const Orders = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const { data: orders = [], isPending } = useQuery({
     queryKey: ["orders"],
@@ -71,20 +67,23 @@ const Orders = () => {
   }
 
   const filteredOrders = orders.filter(order => {
-    const formattedDate = format(new Date(order.created_at), 'MMM dd, yyyy')
-    
-    const matchesSearch =
-      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      formattedDate.includes(searchQuery) ||
-      order.items.toString().includes(searchQuery) ||
-      order.total_amount?.toString().includes(searchQuery)
+  const formattedDate = format(new Date(order.created_at), "MMM dd, yyyy");
 
-    const matchesStatus = statusFilter === "all" ? true : order.status === statusFilter
+  const fullName = `${order.customers?.firstname ?? ""} ${order.customers?.lastname ?? ""}`.toLowerCase();
 
-    return matchesStatus && matchesSearch
-  })
+  const matchesSearch =
+    order.id?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+    fullName.includes(searchQuery.toLowerCase()) ||
+    order.customers?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    formattedDate.includes(searchQuery) ||
+    order.items?.toString().includes(searchQuery) ||
+    order.total_amount?.toString().includes(searchQuery);
+
+  const matchesStatus =
+    statusFilter === "all" ? true : order.status === statusFilter;
+
+  return matchesStatus && matchesSearch;
+});
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -219,7 +218,15 @@ const Orders = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="h-8 w-8 p-0 cursor-pointer hover:bg-blue-400 hover:text-white"
+                          onClick={() => {
+                            setSelectedOrder(order)
+                            setIsSheetOpen(true)
+                          }}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -291,6 +298,11 @@ const Orders = () => {
           )}
         </CardContent>
       </Card>
+      <OrderDetails
+        selectedOrder={selectedOrder}
+        isSheetOpen={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
     </div>
   )
 }

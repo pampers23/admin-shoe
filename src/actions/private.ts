@@ -304,3 +304,19 @@ export async function getRevenueData() {
     throw error;
   }
 }
+
+export async function getProductsForOrder(productIds: number[]) {
+  try {
+      const { data, error } = await supabase
+    .from("products")
+    .select("id, name, price, image_url")
+    .in("id", productIds);
+
+  if (error) throw error;
+  return data || [];
+  } catch (error) {
+    const err = error as Error;
+    toast.error(err.message);
+    throw error;
+  }
+}
